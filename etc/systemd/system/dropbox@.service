@@ -1,0 +1,18 @@
+[Unit]
+Description=Dropbox as a user service
+After=local-fs.target network.target
+
+[Service]
+Type=simple
+Environment=DISPLAY=:0
+Restart=on-failure
+RestartSec=1
+User=%i
+Group=%i
+WorkingDirectory=%h
+ExecStart=/usr/bin/env "%h/.dropbox-dist/dropboxd"
+StandardOutput=syslog
+StandardError=syslog
+
+[Install]
+WantedBy=default.target 
