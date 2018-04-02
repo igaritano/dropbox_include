@@ -31,3 +31,6 @@ username@machine:~$ systemctl enable --user dropbox_include@username
 username@machine:~$ systemctl start --user dropbox@username
 username@machine:~$ systemctl start --user dropbox_include@username
 ```
+
+## License
+[GPLv3](https://www.gnu.org/licenses/gpl-3.0.en.html)
