@@ -22,6 +22,7 @@ In addition, by default, other two configuration files are defined:
 In order to install as a system service, the following two system service definitions are included:
 * dropbox@.service
 * dropbox_include@.service
+
 Those system services should be placed under */etc/systemd/system/* folder, enabled and started.
 ```shell
 # systemctl enable dropbox@username
