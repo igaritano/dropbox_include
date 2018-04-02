@@ -23,11 +23,11 @@ In order to install as a system service, the following two system service defini
 * dropbox@.service
 * dropbox_include@.service
 
-Those system services should be placed under */etc/systemd/system/* folder, enabled and started.
+Those system services should be placed under */user home folder/.config/systemd/user/* folder, enabled and started.
 ```shell
-# systemctl enable dropbox@username
-# systemctl enable dropbox_include@username
+username@machine:~$ systemctl enable --user dropbox@username
+username@machine:~$ systemctl enable --user dropbox_include@username
 
-# systemctl start dropbox@username
-# systemctl start dropbox_include@username
+username@machine:~$ systemctl start --user dropbox@username
+username@machine:~$ systemctl start --user dropbox_include@username
 ```
