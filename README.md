@@ -80,7 +80,7 @@ username@machine:~$ systemctl start --user dropbox_include_headless@username
 Otherwise, if services are going to be executed as root, place *root.service* definitions under */etc/systemd/system/* folder, enable and start them.
 * In case of graphical interface host:
 ```shell
-root@hostname:~# mv ~/.config/systemd/user/* /etc/systemd/system/
+root@hostname:~# mv ~/dropbox_include/etc/systemd/system/* /etc/systemd/system/
 root@machine:~# systemctl enable dropbox@root.service
 root@machine:~# systemctl enable dropbox_include@root.service
 
@@ -89,7 +89,7 @@ root@machine:~# systemctl start dropbox_include@root.service
 ```
 * In case of headless hostname:
 ```shell
-root@hostname:~# mv ~/.config/systemd/user/* /etc/systemd/system/
+root@hostname:~# mv ~/dropbox_include/etc/systemd/system/* /etc/systemd/system/
 root@machine:~# systemctl enable dropbox_headless@root.service
 root@machine:~# systemctl enable dropbox_include_headless@root.service
 
