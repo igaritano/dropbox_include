@@ -3,7 +3,7 @@ dropbox_include.py is designed for GNU/Linux users. It provides *exclude by defa
 
 ## Requirements
 Dropbox itself. Install it from:
-*[Dropbox](https://www.dropbox.com/install)
+* [Dropbox](https://www.dropbox.com/install)
 * More details underneath
 
 This software requires the following python libraries:
@@ -19,6 +19,7 @@ This software requires the following python libraries:
 dropbox_include.py is designed to be installed under .dropbox-dist directory which is usually placed under user home folder *~/*. However, it could be placed in any other directory.
 It requires a configuration file *dropbox_include.conf* which by default should be placed under:
 * *~/*.config/dropbox/
+
 In addition, by default, other two configuration files are defined:
 * dropbox_never_exclude_directories.conf
 * dropbox_include_directories.conf
@@ -51,50 +52,50 @@ In order to install as a system service (systemd), the following system service 
 * dropbox_include@root.service
 * dropbox_include_headless@root.service
 
-There are two main groups of service definitions:
+There are two main group of services definitions:
 * Those designed for unprivileged/common users
 * Those designed for root/administrator user (they include *root* in their name)
 
-Moreover, depending on the target host type, whether the target host has a graphical interface or whether is a headless hostname, there are two additional subgroups:
+Moreover, depending on the target host type, whether the target host has a graphical interface or whether is a headless host, there are two additional subgroups:
 * Those which include *headless* in their name
 * Those who does not
 
 Unprivileged/common system services, should be placed under *~/.config/systemd/user/* folder, enabled and started.
-* In case of graphical interface host:
+* In case of a graphical interface host:
 ```shell
-username@machine:~$ systemctl enable --user dropbox@username
-username@machine:~$ systemctl enable --user dropbox_include@username
+username@hostname:~$ systemctl enable --user dropbox@username
+username@hostname:~$ systemctl enable --user dropbox_include@username
 
-username@machine:~$ systemctl start --user dropbox@username
-username@machine:~$ systemctl start --user dropbox_include@username
+username@hostname:~$ systemctl start --user dropbox@username
+username@hostname:~$ systemctl start --user dropbox_include@username
 ```
-* In case of headless hostname:
+* In case of a headless host:
 ```shell
-username@machine:~$ systemctl enable --user dropbox_headless@username
-username@machine:~$ systemctl enable --user dropbox_include_headless@username
+username@hostname:~$ systemctl enable --user dropbox_headless@username
+username@hostname:~$ systemctl enable --user dropbox_include_headless@username
 
-username@machine:~$ systemctl start --user dropbox_headless@username
-username@machine:~$ systemctl start --user dropbox_include_headless@username
+username@hostname:~$ systemctl start --user dropbox_headless@username
+username@hostname:~$ systemctl start --user dropbox_include_headless@username
 ```
 
 Otherwise, if services are going to be executed as root, place *root.service* definitions under */etc/systemd/system/* folder, enable and start them.
-* In case of graphical interface host:
+* In case of a graphical interface host:
 ```shell
 root@hostname:~# mv ~/dropbox_include/etc/systemd/system/* /etc/systemd/system/
-root@machine:~# systemctl enable dropbox@root.service
-root@machine:~# systemctl enable dropbox_include@root.service
+root@hostname:~# systemctl enable dropbox@root.service
+root@hostname:~# systemctl enable dropbox_include@root.service
 
-root@machine:~# systemctl start dropbox@root.service
-root@machine:~# systemctl start dropbox_include@root.service
+root@hostname:~# systemctl start dropbox@root.service
+root@hostname:~# systemctl start dropbox_include@root.service
 ```
-* In case of headless hostname:
+* In case of a headless host:
 ```shell
 root@hostname:~# mv ~/dropbox_include/etc/systemd/system/* /etc/systemd/system/
-root@machine:~# systemctl enable dropbox_headless@root.service
-root@machine:~# systemctl enable dropbox_include_headless@root.service
+root@hostname:~# systemctl enable dropbox_headless@root.service
+root@hostname:~# systemctl enable dropbox_include_headless@root.service
 
-root@machine:~# systemctl start dropbox_headless@root.service
-root@machine:~# systemctl start dropbox_include_headless@root.service
+root@hostname:~# systemctl start dropbox_headless@root.service
+root@hostname:~# systemctl start dropbox_include_headless@root.service
 ```
 
 ### Dropbox installation steps
@@ -131,6 +132,7 @@ This computer is now linked to Dropbox. Welcome *dropbox_account*
 ```
 
 * Link to desired dropbox account by accessing to the URL provided by dropbox daemon and login in with desired dropbox account.
+
 ** If successful the daemon will output the following message: *This computer is now linked to Dropbox. Welcome dropbox_account*
 
 
