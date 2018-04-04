@@ -106,8 +106,6 @@ root@hostname:~# wget https://www.dropbox.com/download?dl=packages/dropbox.py -O
 root@hostname:~# mv ~/dropbox /usr/bin/
 root@hostname:~# chmod +x /usr/bin/dropbox
 root@hostname:~# apt install python-gpgme
-root@hostname:~# dropbox start -i
-root@hostname:~# dropbox stop
 ```
 
 * Run dropbox daemon in order to activate it
