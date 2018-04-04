@@ -1,14 +1,13 @@
 [Unit]
-Description=Dropbox include service
-Requires=dropbox@.service
+Description=Dropbox as a user service
 After=local-fs.target network.target
 
 [Service]
 Type=simple
 Restart=on-failure
-RestartSec=10s
+RestartSec=1
 WorkingDirectory=%h
-ExecStart=%h/.dropbox-dist/dropbox_include.py
+ExecStart=/usr/bin/env "%h/.dropbox-dist/dropboxd"
 StandardOutput=syslog
 StandardError=syslog
 

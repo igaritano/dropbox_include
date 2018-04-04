@@ -1,10 +1,14 @@
 ## Description
-dropbox_include.py is designed for GNU/Linux users. It provides *exclude by default* functionality by defining directories to be included. Everytime a new folder is created under dropbox main directory it checks whether the folder should be excluded or not. Moreover, directories to be included can be defined without having to restart the application/service. New settings will be applied everytime a new folder is created under dropbox main directory.
+dropbox_include.py is designed for GNU/Linux users. It provides *exclude by default* functionality by defining directories to be included. Every time a new folder is created under dropbox main directory it checks whether the folder should be excluded or not. Moreover, directories to be included can be defined without having to restart the application/service. New settings will be applied every time a new folder is created under dropbox main directory.
 
 ## Requirements
+Dropbox itself. Install it from:
+*[Dropbox](https://www.dropbox.com/install)
+* More details underneath
+
 This software requires the following python libraries:
-* pyinotify
-* systemd.journal
+* pyinotify (python-pyinotify)
+* systemd.journal (python-systemd)
 * os
 * subprocess
 * time
@@ -12,18 +16,51 @@ This software requires the following python libraries:
 * logging
 
 ## Installation
-dropbox_include.py is designed to be installed under .dropbox-dist directory which is usually placed under user home folder. However, it could be placed in any other directory.
+dropbox_include.py is designed to be installed under .dropbox-dist directory which is usually placed under user home folder *~/*. However, it could be placed in any other directory.
 It requires a configuration file *dropbox_include.conf* which by default should be placed under:
-* */user home folder/*.config/dropbox/
+* *~/*.config/dropbox/
 In addition, by default, other two configuration files are defined:
 * dropbox_never_exclude_directories.conf
 * dropbox_include_directories.conf
 
-In order to install as a system service, the following two system service definitions are included:
-* dropbox@.service
-* dropbox_include@.service
+```shell
+root@hostname:~# apt install python-pyinotify python-systemd
+username@hostname:~$ cd
+username@hostname:~$ git clone https://github.com/igaritano/dropbox_include.git
+username@hostname:~$ mv ~/dropbox_include/dropbox_include.py ~/.dropbox-dist/
+username@hostname:~$ mv ~/dropbox_include/.config/* ~/.config/
+username@hostname:~$ vi ~/.config/dropbox/dropbox_include.conf
+```
+or in case of running as root
+```shell
+root@hostname:~# apt install python-pyinotify python-systemd
+root@hostname:~# cd
+root@hostname:~# git clone https://github.com/igaritano/dropbox_include.git
+root@hostname:~# mv ~/dropbox_include/dropbox_include.py ~/.dropbox-dist/
+root@hostname:~# mv ~/dropbox_include/.config ~/
+root@hostname:~# vi ~/.config/dropbox/dropbox_include.conf
+```
 
-Those system services should be placed under */user home folder/.config/systemd/user/* folder, enabled and started.
+In order to install as a system service (systemd), the following system service definitions are included:
+* dropbox@.service
+* dropbox_headless@.service
+* dropbox_include@.service
+* dropbox_include_headless@.service
+* dropbox@root.service
+* dropbox_headless@root.service
+* dropbox_include@root.service
+* dropbox_include_headless@root.service
+
+There are two main groups of service definitions:
+* Those designed for unprivileged/common users
+* Those designed for root/administrator user (they include *root* in their name)
+
+Moreover, depending on the target host type, whether the target host has a graphical interface or whether is a headless hostname, there are two additional subgroups:
+* Those which include *headless* in their name
+* Those who does not
+
+Unprivileged/common system services, should be placed under *~/.config/systemd/user/* folder, enabled and started.
+* In case of graphical interface host:
 ```shell
 username@machine:~$ systemctl enable --user dropbox@username
 username@machine:~$ systemctl enable --user dropbox_include@username
@@ -31,6 +68,71 @@ username@machine:~$ systemctl enable --user dropbox_include@username
 username@machine:~$ systemctl start --user dropbox@username
 username@machine:~$ systemctl start --user dropbox_include@username
 ```
+* In case of headless hostname:
+```shell
+username@machine:~$ systemctl enable --user dropbox_headless@username
+username@machine:~$ systemctl enable --user dropbox_include_headless@username
+
+username@machine:~$ systemctl start --user dropbox_headless@username
+username@machine:~$ systemctl start --user dropbox_include_headless@username
+```
+
+Otherwise, if services are going to be executed as root, place *root.service* definitions under */etc/systemd/system/* folder, enable and start them.
+* In case of graphical interface host:
+```shell
+root@hostname:~# mv ~/.config/systemd/user/* /etc/systemd/system/
+root@machine:~# systemctl enable dropbox@root.service
+root@machine:~# systemctl enable dropbox_include@root.service
+
+root@machine:~# systemctl start dropbox@root.service
+root@machine:~# systemctl start dropbox_include@root.service
+```
+* In case of headless hostname:
+```shell
+root@hostname:~# mv ~/.config/systemd/user/* /etc/systemd/system/
+root@machine:~# systemctl enable dropbox_headless@root.service
+root@machine:~# systemctl enable dropbox_include_headless@root.service
+
+root@machine:~# systemctl start dropbox_headless@root.service
+root@machine:~# systemctl start dropbox_include_headless@root.service
+```
+
+### Dropbox installation steps
+These are dropbox installation steps (64 bits):
+* Download the dropbox python script, place it under */usr/bin/*, install dependencies and install dropbox binary.
+```shell
+root@hostname:~# wget https://www.dropbox.com/download?dl=packages/dropbox.py -O ~/dropbox
+root@hostname:~# mv ~/dropbox /usr/bin/
+root@hostname:~# chmod +x /usr/bin/dropbox
+root@hostname:~# apt install python-gpgme
+root@hostname:~# dropbox start -i
+root@hostname:~# dropbox stop
+```
+
+* Run dropbox daemon in order to activate it
+```shell
+username@hostname:~$ dropbox start -i
+username@hostname:~$ dropbox stop
+username@hostname:~$ ~/.dropbox-dist/dropboxd
+This computer isn't linked to any Dropbox account...
+Please visit https://www.dropbox.com/cli_link_nonce?nonce=*activation_code* to link this device.
+This computer is now linked to Dropbox. Welcome *dropbox_account*
+^C
+```
+or
+```shell
+root@hostname:~# dropbox start -i
+root@hostname:~# dropbox stop
+root@hostname:~# ~/.dropbox-dist/dropboxd
+This computer isn't linked to any Dropbox account...
+Please visit https://www.dropbox.com/cli_link_nonce?nonce=*activation_code* to link this device.
+This computer is now linked to Dropbox. Welcome *dropbox_account*
+^C
+```
+
+* Link to desired dropbox account by accessing to the URL provided by dropbox daemon and login in with desired dropbox account.
+** If successful the daemon will output the following message: *This computer is now linked to Dropbox. Welcome dropbox_account*
+
 
 ## License
 [GPLv3](https://www.gnu.org/licenses/gpl-3.0.en.html)

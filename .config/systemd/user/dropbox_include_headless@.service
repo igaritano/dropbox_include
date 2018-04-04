@@ -1,6 +1,6 @@
 [Unit]
 Description=Dropbox include service
-Requires=dropbox@.service
+Requires=dropbox_headless@.service
 After=local-fs.target network.target
 
 [Service]

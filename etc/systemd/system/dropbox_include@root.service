@@ -7,8 +7,8 @@ After=local-fs.target network.target
 Type=simple
 Restart=on-failure
 RestartSec=10s
-WorkingDirectory=%h
-ExecStart=%h/.dropbox-dist/dropbox_include.py
+WorkingDirectory=/root
+ExecStart=/root/.dropbox-dist/dropbox_include.py
 StandardOutput=syslog
 StandardError=syslog
 
