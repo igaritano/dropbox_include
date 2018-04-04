@@ -43,7 +43,9 @@ root@hostname:~# mv ~/dropbox_include/.config ~/
 Before running *dropbox_include.py* check whether the setting are correct:
 ```shell
 username@hostname:~$ vi ~/.config/dropbox/dropbox_include.conf
+```
 or
+```shell
 root@hostname:~# vi ~/.config/dropbox/dropbox_include.conf
 ```
 
@@ -67,7 +69,7 @@ Moreover, depending on the target host type, whether the target host has a graph
    * dropbox_include_headless@.service
    * dropbox_headless@root.service
    * dropbox_include_headless@root.service
-* Those who does not
+* Those who do not
    * dropbox@.service
    * dropbox_include@.service
    * dropbox@root.service
@@ -132,7 +134,9 @@ Please visit https://www.dropbox.com/cli_link_nonce?nonce=*activation_code* to l
 This computer is now linked to Dropbox. Welcome *dropbox_account*
 ^C
 ```
+
     * or in case of root user
+    
 ```shell
 root@hostname:~# dropbox start -i
 root@hostname:~# dropbox stop
