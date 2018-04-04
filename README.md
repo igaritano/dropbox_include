@@ -124,7 +124,7 @@ root@hostname:~# apt install python-gpgme
 ```
 
 * Run dropbox daemon in order to activate it
-    * In case of common user
+   * In case of common user
 ```shell
 username@hostname:~$ dropbox start -i
 username@hostname:~$ dropbox stop
@@ -134,8 +134,7 @@ Please visit https://www.dropbox.com/cli_link_nonce?nonce=*activation_code* to l
 This computer is now linked to Dropbox. Welcome *dropbox_account*
 ^C
 ```
-
-    * or in case of root user
+   * or in case of root user
     
 ```shell
 root@hostname:~# dropbox start -i
