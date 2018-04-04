@@ -132,8 +132,7 @@ This computer is now linked to Dropbox. Welcome *dropbox_account*
 ```
 
 * Link to desired dropbox account by accessing to the URL provided by dropbox daemon and login in with desired dropbox account.
-
-** If successful the daemon will output the following message: *This computer is now linked to Dropbox. Welcome dropbox_account*
+* If successful the daemon will output the following message: *This computer is now linked to Dropbox. Welcome dropbox_account*
 
 
 ## License
