@@ -33,7 +33,6 @@ __version__ = '1.0'
 
 
 # Global variables
-verboselevel = 0
 logger = None
 logger_level = 'WARNING'
 logger_method = 'console'
@@ -107,9 +106,6 @@ def confInclude(line, begin_line):
     logger.debug('Configuration file - Include line: '
                  + str(line))
 
-    # Global variables
-    global verboselevel
-
     # Local variables
     space = False
     space_position = 0
@@ -124,9 +120,6 @@ def confInclude(line, begin_line):
 
     variable = line[space_position:]
 
-    if verboselevel > 8:
-        print(line)
-
     return variable
 
     # confInclude function ends here.
@@ -140,9 +133,6 @@ def confAssign(line, begin_line):
 
     logger.debug('Configuration file - Assign line: '
                  + str(line))
-
-    # Global variables
-    global verboselevel
 
     # Local variables
     equal_sign = False
@@ -159,9 +149,6 @@ def confAssign(line, begin_line):
             break
 
     variable = line[assign_position:]
-
-    if verboselevel > 8:
-        print(line)
 
     return variable
 
@@ -211,8 +198,6 @@ def configuration(config_file):
                 print("IOError")
 
     if len(content):
-        if verboselevel > 8:
-            print("Configuration file:")
         for line in content.split('\n'):
             begin_line = 0
             if len(line) > 0:
@@ -254,11 +239,7 @@ def configuration(config_file):
                 elif line[begin_line:].startswith('logger_backupCount'):
                     logger_backupCount = confAssign(line, begin_line)
                 else:
-                    if verboselevel > 8:
-                        print(line)
-
-        if verboselevel > 8:
-            print("End of configuration file")
+                    logger.debug(str(line))
 
     content = ''
 
@@ -287,8 +268,6 @@ def configuration(config_file):
                         directory = os.path.join(
                             os.path.expanduser(dropbox_path), line)
                         include_directory_list.append(directory)
-                    if verboselevel > 8:
-                        print(line)
 
     include_directory_list.sort()
 
@@ -331,7 +310,6 @@ def parse_arguments():
     global dropbox_exclude_add_command
     global dropbox_exclude_list_command
     global dropbox_exclude_remove_command
-    global verboselevel
     global logger_method
     global logger_level
     global logger_format
@@ -346,14 +324,6 @@ def parse_arguments():
     parser.add_argument('--config_file', action='store',
                         dest='config_file',
                         help='Configuration file')
-    parser.add_argument('-v', action='store',
-                        dest='verboselevel',
-                        type=int,
-                        help='Verbosity level')
-    parser.add_argument('--verbosity', action='store',
-                        dest='verboselevel',
-                        type=int,
-                        help='Verbosity level')
     parser.add_argument('-c', action='store',
                         dest='dropbox_cache',
                         help='Dropbox cache folder')
@@ -408,9 +378,6 @@ def parse_arguments():
 
     if args.config_file:
         config_file = args.config_file
-
-    if args.verboselevel:
-        verboselevel = args.verboselevel
 
     if args.dropbox_cache:
         dropbox_cache = args.dropbox_cache
@@ -472,20 +439,12 @@ def evalCurrentDirectories(path):
     logger.debug('Evaluate subdirectories in a given path: '
                  + str(path))
 
-    # Global variables
-    global verboselevel
-
     # Local variables
     current_directories = []
-
-    if verboselevel > 8:
-        print(path)
 
     for directory, subdirectories, files in os.walk(os.path.expanduser(path),
                                                     followlinks=True):
         current_directories.append(directory)
-        if verboselevel > 8:
-            print(directory)
 
     current_directories.sort()
 
@@ -495,7 +454,45 @@ def evalCurrentDirectories(path):
     # ------------------------------------------
 
 
-def evalToExcludeDirectories(include_directories, current_directories):
+def pathToDict(path):
+
+    # Local variables
+    counter = 1
+    basename = ''
+    basenames_list = []
+    pathtodict = {}
+
+    while os.path.basename(path):
+        basename = os.path.basename(path)
+        basenames_list.append(basename)
+        path = os.path.dirname(path)
+
+    basenames_list.reverse()
+    for basename in basenames_list:
+        pathtodict[counter] = basename
+        counter += 1
+
+    return pathtodict
+
+    # pathToDict function ends here.
+    # ------------------------------
+
+
+def directoriesListToDicts(directorieslist):
+
+    # Local variables
+    directoriesDictList = []
+
+    for directory in directorieslist:
+        directoriesDictList.append(pathToDict(directory))
+
+    return directoriesDictList
+
+    # directoriesListToDicts function ends here.
+    # ------------------------------------------
+
+
+def evalToExcludeDirectories2(include_directories, current_directories):
     '''
     This function evaluates directories to be excluded comparing each current
     directory with included directories.
@@ -508,124 +505,103 @@ def evalToExcludeDirectories(include_directories, current_directories):
     # Global variables
     global dropbox_path
     global dropbox_cache
-    global verboselevel
 
     # Local variables
-    exclude_directories_set = set()
-    exclude_directories = []
+    include_directory_list_of_dicts = []
+    current_directory_list_of_dicts = []
+    aux_dict = {}
+    exclude_directory_list_of_dicts = []
+    exclude_directory_set = set()
+    exclude_directory_list = []
 
-    for current_directory in current_directories:
+    include_directory_list_of_dicts = directoriesListToDicts(
+        include_directories)
 
-        exclude = True
+    include_directory_list_of_dicts.append(directoriesListToDicts(
+        [os.path.join(os.path.expanduser(dropbox_path), dropbox_cache)])[0])
 
-        if current_directory.startswith(os.path.join(
-                os.path.expanduser(dropbox_path), dropbox_cache)):
+    current_directory_list_of_dicts = directoriesListToDicts(
+        current_directories)
 
-            exclude = False
+    for current_directory in current_directory_list_of_dicts:
 
-        else:
+        mainsubdirectory = []
 
-            root_current_directory = os.path.dirname(current_directory)
+        for include_directory in include_directory_list_of_dicts:
 
-            for include_directory in include_directories:
+            maxcounter = 0
 
-                root_include_directory = os.path.dirname(include_directory)
+            for counter in range(1, min(len(current_directory),
+                                        len(include_directory)) + 1):
 
-                if len(current_directory) > len(include_directory):
+                if current_directory[counter] == include_directory[counter]:
 
-                    if not root_current_directory == root_include_directory:
-
-                        if root_current_directory.startswith(
-                                include_directory):
-
-                            exclude = False
-
-                if len(current_directory) == len(include_directory):
-
-                    if current_directory == include_directory:
-
-                        exclude = False
+                    maxcounter = counter
 
                 else:
 
-                    if not root_current_directory == root_include_directory:
+                    break
 
-                        if include_directory.startswith(current_directory):
+            mainsubdirectory.append(maxcounter)
 
-                            exclude = False
+        # commonalities = (number_of_in_common_directories,
+        #                 (number_of_include_directory_directories,
+        #                   position_in_include_directory_list_of_dicts),
+        #                  number_of_current_directory_directories)
+        commonalities = (max(mainsubdirectory),
+                         min([(len(include_directory_list_of_dicts[position]),
+                               position)
+                              for position, value in
+                              enumerate(mainsubdirectory)
+                              if value == max(mainsubdirectory)]),
+                         len(current_directory))
 
-        if exclude:
-            try:
-                if not os.path.samefile(os.path.expanduser(dropbox_path),
-                                        current_directory):
-                    exclude_directories_set.add(current_directory)
-            except OSError:
-                if verboselevel > 8:
-                    print("OSError")
-                continue
+        if commonalities[0] == 0:
 
-    exclude_directories = list(exclude_directories_set)
+            aux_dict = {}
+            aux_dict['directory'] = current_directory
+            aux_dict['length'] = commonalities[2]
+            exclude_directory_list_of_dicts.append(aux_dict)
 
-    exclude_directories.sort()
+        else:
 
-    logger.debug('Not present directory list: '
-                 + str(exclude_directories))
+            if commonalities[1][0] < commonalities[2]:
+                if commonalities[0] < commonalities[1][0]:
+                    aux_dict = {}
+                    aux_dict['directory'] = current_directory
+                    aux_dict['length'] = commonalities[0] + 1
+                    exclude_directory_list_of_dicts.append(aux_dict)
 
-    return exclude_directories
+            elif commonalities[1][0] == commonalities[2]:
+                if commonalities[0] < commonalities[2]:
+                    aux_dict = {}
+                    aux_dict['directory'] = current_directory
+                    aux_dict['length'] = commonalities[2]
+                    exclude_directory_list_of_dicts.append(aux_dict)
 
-    # evalToExcludeDirectories function ends here.
-    # --------------------------------------------
+            else:
+                if commonalities[0] < commonalities[2]:
+                    aux_dict = {}
+                    aux_dict['directory'] = current_directory
+                    aux_dict['length'] = commonalities[2]
+                    exclude_directory_list_of_dicts.append(aux_dict)
 
+        for entry in exclude_directory_list_of_dicts:
+            print(entry)
+            directory = os.sep
+            for index in range(1, entry['length'] + 1):
+                directory = os.path.join(directory, entry['directory'][index])
+            exclude_directory_set.add(directory)
 
-def evalRootExcludeDirectories(exclude_directories):
-    '''
-    Compare every two directories.
+    exclude_directory_list = list(exclude_directory_set)
+    exclude_directory_list.sort()
 
-    If they have same root and the root folder is an existing one, check which
-    of them is shorter. Just choose the shortest to exclude and dismiss the
-    other one.
-    '''
+    logger.debug('To exclude directories: ' + str(exclude_directory_list))
 
-    logger.debug('Evaluate the root directories of a given directory list')
+    return exclude_directory_list
 
-    # Local variables
-    in_common = ''
-    exclude_directories_aux = []
-    exclude_directories_index = []
-    directories = []
-
-    while len(exclude_directories) > 0:
-
-        exclude_directories_index = []
-        exclude_directories_aux.append(exclude_directories.pop(0))
-
-        for i in range(len(exclude_directories)):
-
-            directories = []
-            directories.append(exclude_directories_aux[
-                len(exclude_directories_aux)-1])
-            directories.append(exclude_directories[i])
-
-            in_common = os.path.commonprefix(directories)
-
-            if os.path.exists(in_common):
-                if not os.path.samefile(os.path.expanduser(dropbox_path),
-                                        in_common):
-                    if len(directories[0]) < len(directories[1]):
-                        exclude_directories_index.append(i)
-
-        exclude_directories_index.reverse()
-
-        for exclude_index in exclude_directories_index:
-            exclude_directories.pop(exclude_index)
-
-    logger.debug('Reduced directory list: '
-                 + str(exclude_directories_aux))
-
-    return(exclude_directories_aux)
-
-    # evalRootExcludeDirectories function ends here.
-    # ----------------------------------------------
+    # evalToExcludeDirectories2 function ends here.
+    # ---------------------------------------------
 
 
 def executeCommand(command,
@@ -789,7 +765,7 @@ def evalExcludeInclude(directory_list):
 
     configuration(config_file)
 
-    exclude_directories = evalToExcludeDirectories(
+    exclude_directories = evalToExcludeDirectories2(
         include_directory_list, directory_list)
 
     if len(exclude_directories):
@@ -886,17 +862,11 @@ def main():
     logger.debug('Initial dropbox_path directories: '
                  + str(current_directories))
 
-    exclude_directories = evalToExcludeDirectories(
+    exclude_directories = evalToExcludeDirectories2(
         include_directory_list,
         current_directories)
 
-    logger.debug('Initial to exclude directories: '
-                 + str(exclude_directories))
-
-    exclude_directories = evalRootExcludeDirectories(
-        exclude_directories)
-
-    logger.debug('Initial reduced list to exclude directories: '
+    logger.debug('To exclude directories: '
                  + str(exclude_directories))
 
     if len(exclude_directories):
@@ -962,6 +932,9 @@ def main():
             logger.warning('Leaving due to kill signal')
             notifier.stop()
             raise
+
+# New functions
+# -------------
 
 
 if __name__ == '__main__':
