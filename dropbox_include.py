@@ -455,6 +455,10 @@ def evalCurrentDirectories(path):
 
 
 def pathToDict(path):
+    '''
+    This function returns a path converted into a dictionary.
+    For example: '/home/user/Documents' -> {1:'home', 2:'user', 3:'Documents'}
+    '''
 
     # Local variables
     counter = 1
@@ -479,6 +483,9 @@ def pathToDict(path):
 
 
 def directoriesListToDicts(directorieslist):
+    '''
+    This function returns a list of path converted into dictionaries.
+    '''
 
     # Local variables
     directoriesDictList = []
@@ -932,9 +939,6 @@ def main():
             logger.warning('Leaving due to kill signal')
             notifier.stop()
             raise
-
-# New functions
-# -------------
 
 
 if __name__ == '__main__':
