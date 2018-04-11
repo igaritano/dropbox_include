@@ -29,7 +29,7 @@ root@hostname:~# apt install python-pyinotify python-systemd
 username@hostname:~$ cd
 username@hostname:~$ git clone https://github.com/igaritano/dropbox_include.git
 username@hostname:~$ cp ~/dropbox_include/dropbox_include.py ~/.dropbox-dist/
-username@hostname:~$ cp -r ~/dropbox_include/.config/* ~/.config/
+username@hostname:~$ cp -r ~/dropbox_include/.config ~/
 ```
 or in case of running as root
 ```shell
@@ -37,7 +37,7 @@ root@hostname:~# apt install python-pyinotify python-systemd
 root@hostname:~# cd
 root@hostname:~# git clone https://github.com/igaritano/dropbox_include.git
 root@hostname:~# cp ~/dropbox_include/dropbox_include.py ~/.dropbox-dist/
-root@hostname:~# cp -r ~/dropbox_include/.config/* ~/.config/
+root@hostname:~# cp -r ~/dropbox_include/.config ~/
 ```
 
 Before running *dropbox_include.py* check whether the setting are correct:
