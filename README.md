@@ -28,16 +28,16 @@ In case of a common user
 root@hostname:~# apt install python-pyinotify python-systemd
 username@hostname:~$ cd
 username@hostname:~$ git clone https://github.com/igaritano/dropbox_include.git
-username@hostname:~$ mv ~/dropbox_include/dropbox_include.py ~/.dropbox-dist/
-username@hostname:~$ mv ~/dropbox_include/.config/* ~/.config/
+username@hostname:~$ cp ~/dropbox_include/dropbox_include.py ~/.dropbox-dist/
+username@hostname:~$ cp -r ~/dropbox_include/.config/* ~/.config/
 ```
 or in case of running as root
 ```shell
 root@hostname:~# apt install python-pyinotify python-systemd
 root@hostname:~# cd
 root@hostname:~# git clone https://github.com/igaritano/dropbox_include.git
-root@hostname:~# mv ~/dropbox_include/dropbox_include.py ~/.dropbox-dist/
-root@hostname:~# mv ~/dropbox_include/.config ~/
+root@hostname:~# cp ~/dropbox_include/dropbox_include.py ~/.dropbox-dist/
+root@hostname:~# cp -r ~/dropbox_include/.config/* ~/.config/
 ```
 
 Before running *dropbox_include.py* check whether the setting are correct:
@@ -119,12 +119,12 @@ These are dropbox installation steps (64 bits):
 ```shell
 root@hostname:~# wget https://www.dropbox.com/download?dl=packages/dropbox.py -O ~/dropbox
 root@hostname:~# mv ~/dropbox /usr/bin/
-root@hostname:~# chmod +x /usr/bin/dropbox
 root@hostname:~# apt install python-gpgme
 ```
 
 * Run dropbox daemon in order to activate it. In case of common user
 ```shell
+root@hostname:~# chmod +x /usr/bin/dropbox
 username@hostname:~$ dropbox start -i
 username@hostname:~$ dropbox stop
 username@hostname:~$ ~/.dropbox-dist/dropboxd
@@ -136,6 +136,7 @@ This computer is now linked to Dropbox. Welcome *dropbox_account*
 * or in case of root user
     
 ```shell
+root@hostname:~# chmod u+x /usr/bin/dropbox
 root@hostname:~# dropbox start -i
 root@hostname:~# dropbox stop
 root@hostname:~# ~/.dropbox-dist/dropboxd
